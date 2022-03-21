@@ -42,7 +42,7 @@ object MakeDeps {
         System.exit(1)
       case Success((normalized, shas, duplicates)) =>
         // creates pom xml when path is provided
-        g.pomFile.foreach { fileName => CreatePom(normalized, fileName) }
+        g.pomFile.foreach { fileName => CreatePom(normalized, model, fileName) }
         // build the BUILDs in thirdParty
         val targets = Writer.targets(normalized, model) match {
           case Right(t) => t

@@ -12,8 +12,9 @@ object CreatePom {
     }
   }
 
-  def translate(dependencies: Graph[MavenCoordinate, Unit]): String = {
-    val mavenCoordinateXml = dependencies.nodes.toList.map {
+  def translate(dependencies: Graph[MavenCoordinate, Unit], model: Model): String = {
+    def replaced(m: MavenCoordinate): Boolean = model.getReplacements.get(m.unversioned).isDefined
+    val mavenCoordinateXml = dependencies.nodes.filterNot(replaced).toList.map {
       d => d.toXml
     }
 
@@ -29,10 +30,10 @@ object CreatePom {
     p.format(pomXml)
   }
 
-  def apply(dependencies: Graph[MavenCoordinate, Unit], path: String): Unit = {
+  def apply(dependencies: Graph[MavenCoordinate, Unit], model: Model, path: String): Unit = {
     scala.xml.XML.save(
       path,
-      scala.xml.XML.loadString(translate(dependencies)),
+      scala.xml.XML.loadString(translate(dependencies, model)),
       "UTF-8",
       true
     )
